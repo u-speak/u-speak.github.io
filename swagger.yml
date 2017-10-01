@@ -1,0 +1,133 @@
+swagger: '2.0'
+info:
+  title: uspeak API
+  description: Free speech for all
+  version: 1.0.0
+host: uspeak.io
+schemes:
+  - https
+basePath: /api/v1
+produces:
+  - application/json
+paths:
+  /status:
+    get:
+      description: Returns the status of the current node
+      responses:
+        '200':
+          description: Successfull Status Response
+          schema:
+            $ref: '#/definitions/StatusInfo'
+  '/chains/{type}/{hash}':
+    get:
+      description: Returns the post block with the specified hash
+      parameters:
+        - name: type
+          in: path
+          type: string
+          required: true
+          description: Type of the chain to query. Can be 'image', 'key' or 'post'
+        - name: hash
+          in: path
+          type: string
+          required: true
+          description: Base64 encoded hash of the block
+      responses:
+        '200':
+          description: Block was found
+          schema:
+            $ref: '#/definitions/Block'
+        '404':
+          description: No block found
+          schema:
+            $ref: '#/definitions/Error'
+  '/chains/{type}':
+    post:
+      description: Create a new block
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Block object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Block'
+      responses:
+        '201':
+          description: Block was created
+        '400':
+          description: Invalid nonce
+  /search:
+    get:
+      description: Queries for blocks
+      parameters:
+        - in: query
+          name: author
+          description: Base64 encoded hash of the key block
+          type: string
+        - in: query
+          name: q
+          description: Text to perform a full-post search for
+          type: string
+      responses:
+        '200':
+          description: Results were found
+          schema:
+            title: results
+            type: array
+            items:
+              type: '#/definitions/Block'
+        
+definitions:
+  StatusInfo:
+    type: object
+    properties:
+      address:
+        type: string
+        description: Hostname/IP of the node serving this information
+      version:
+        type: string
+        description: Version Identifier of the running node.
+      length:
+        type: integer
+        description: Count of blocks this node stores
+      connections:
+        type: integer
+        description: Count of nodes this node is connected to
+  Block:
+    type: object
+    properties:
+      hash:
+        type: string
+        description: Base64 encoded hash of the block
+      previous_hash:
+        type: string
+        description: Base64 encoded hash of the previous block
+      type:
+        type: string
+        description: Type of the stored data (Post/Image)
+      content:
+        type: string
+        description: Block content as specified in Type
+      public_key:
+        type: string
+        description: ASCII encoded gpg public key
+      signature:
+        type: string
+        description: gpg signature of the content
+      nonce:
+        type: integer
+        description: Calculated nonce
+  SearchResult:
+    type: array
+    items:
+      - type: Block
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
