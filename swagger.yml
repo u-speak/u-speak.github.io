@@ -26,7 +26,7 @@ paths:
           in: path
           type: string
           required: true
-          description: Type of the chain to query. Can be 'image', 'key' or 'post'
+          description: 'Type of the chain to query. Can be ''image'', ''key'' or ''post'''
         - name: hash
           in: path
           type: string
@@ -47,6 +47,11 @@ paths:
       consumes:
         - application/json
       parameters:
+        - in: path
+          name: type
+          type: string
+          description: 'Block type to be added'
+          required: true
         - in: body
           name: body
           description: Block object to be added
@@ -77,8 +82,8 @@ paths:
             title: results
             type: array
             items:
-              type: '#/definitions/Block'
-        
+              $ref: '#/definitions/Block'
+               
 definitions:
   StatusInfo:
     type: object
@@ -119,10 +124,6 @@ definitions:
       nonce:
         type: integer
         description: Calculated nonce
-  SearchResult:
-    type: array
-    items:
-      - type: Block
   Error:
     type: object
     properties:
