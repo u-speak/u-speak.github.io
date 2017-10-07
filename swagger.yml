@@ -109,6 +109,9 @@ definitions:
       previous_hash:
         type: string
         description: Base64 encoded hash of the previous block
+      date:
+        type: integer
+        description: Unix Timestap of the time this block was added
       type:
         type: string
         description: Type of the stored data (Post/Image)
