@@ -47,10 +47,10 @@ paths:
       consumes:
         - application/json
       parameters:
-        - in: path
-          name: type
+        - name: type
+          in: path
           type: string
-          description: 'Block type to be added'
+          description: 'Type of the chain to query. Can be ''image'', ''key'' or ''post'''
           required: true
         - in: body
           name: body
@@ -65,6 +65,12 @@ paths:
           description: Invalid nonce
     get:
       description: Gets all blocks
+      parameters:
+        - name: type
+          in: path
+          type: string
+          description: 'Type of the chain to query. Can be ''image'', ''key'' or ''post'''
+          required: true
       responses:
         '200':
           description: Results were found
