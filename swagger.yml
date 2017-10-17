@@ -63,6 +63,17 @@ paths:
           description: Block was created
         '400':
           description: Invalid nonce
+    get:
+      description: Gets all blocks
+      responses:
+        '200':
+          description: Results were found
+          schema:
+            title: results
+            type: array
+            items:
+              $ref: '#/definitions/Block'
+
   /search:
     get:
       description: Queries for blocks
