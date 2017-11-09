@@ -117,6 +117,45 @@ definitions:
       connections:
         type: integer
         description: Count of nodes this node is connected to
+      chains:
+        type: object
+        properties:
+          post:
+            type: object
+            properties:
+              last_hash:
+                type: string
+                description: Base64 encoded hash of the last block in the chain
+              valid:
+                type: boolean
+                description: Whether or not the chain is valid
+              length:
+                type: integer
+                description: Count of blocks this chain stores
+          image:
+            type: object
+            properties:
+              last_hash:
+                type: string
+                description: Base64 encoded hash of the last block in the chain
+              valid:
+                type: boolean
+                description: Whether or not the chain is valid
+              length:
+                type: integer
+                description: Count of blocks this chain stores
+          key:
+            type: object
+            properties:
+              last_hash:
+                type: string
+                description: Base64 encoded hash of the last block in the chain
+              valid:
+                type: boolean
+                description: Whether or not the chain is valid
+              length:
+                type: integer
+                description: Count of blocks this chain stores
   Block:
     type: object
     properties:
