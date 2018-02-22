@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: uspeak API
   description: Free speech for all
-  version: 1.0.0
+  version: 1.69.42
 host: uspeak.io
 schemes:
   - https
@@ -18,59 +18,9 @@ paths:
           description: Successfull Status Response
           schema:
             $ref: '#/definitions/StatusInfo'
-  '/chains/{type}/{hash}':
+  '/tangle/random':
     get:
-      description: Returns the post block with the specified hash
-      parameters:
-        - name: type
-          in: path
-          type: string
-          required: true
-          description: 'Type of the chain to query. Can be ''image'', ''key'' or ''post'''
-        - name: hash
-          in: path
-          type: string
-          required: true
-          description: Base64 encoded hash of the block
-      responses:
-        '200':
-          description: Block was found
-          schema:
-            $ref: '#/definitions/Block'
-        '404':
-          description: No block found
-          schema:
-            $ref: '#/definitions/Error'
-  '/chains/{type}':
-    post:
-      description: Create a new block
-      consumes:
-        - application/json
-      parameters:
-        - name: type
-          in: path
-          type: string
-          description: 'Type of the chain to query. Can be ''image'', ''key'' or ''post'''
-          required: true
-        - in: body
-          name: body
-          description: Block object to be added
-          required: true
-          schema:
-            $ref: '#/definitions/Block'
-      responses:
-        '201':
-          description: Block was created
-        '400':
-          description: Invalid nonce
-    get:
-      description: Gets all blocks
-      parameters:
-        - name: type
-          in: path
-          type: string
-          description: 'Type of the chain to query. Can be ''image'', ''key'' or ''post'''
-          required: true
+      description: Get a list of random sites
       responses:
         '200':
           description: Results were found
@@ -78,16 +28,50 @@ paths:
             title: results
             type: array
             items:
-              $ref: '#/definitions/Block'
-
+              $ref: '#/definitions/Site'
+  '/tangle/{hash}':
+    get:
+      description: Returns the site with the specified hash
+      parameters:
+        - name: hash
+          in: path
+          type: string
+          required: true
+          description: Base64 encoded hash of the site
+      responses:
+        '200':
+          description: Site was found
+          schema:
+            $ref: '#/definitions/Site'
+        '404':
+          description: No site found
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      description: Create a new site
+      consumes:
+        - application/json
+      parameters:
+        - name: hash
+          in: path
+          type: string
+          description: 'Actually the type of the site to add. Stupid swagger limitations...'
+          required: true
+        - in: body
+          name: body
+          description: Site object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Site'
+      responses:
+        '201':
+          description: Site was created
+        '400':
+          description: Invalid nonce
   /search:
     get:
-      description: Queries for blocks
+      description: Queries for sites
       parameters:
-        - in: query
-          name: author
-          description: Base64 encoded hash of the key block
-          type: string
         - in: query
           name: q
           description: Text to perform a full-post search for
@@ -99,7 +83,7 @@ paths:
             title: results
             type: array
             items:
-              $ref: '#/definitions/Block'
+              $ref: '#/definitions/Site'
                
 definitions:
   StatusInfo:
@@ -113,76 +97,41 @@ definitions:
         description: Version Identifier of the running node.
       length:
         type: integer
-        description: Count of blocks this node stores
+        description: Count of sites this node stores
       connections:
-        type: integer
-        description: Count of nodes this node is connected to
-      chains:
-        type: object
-        properties:
-          post:
-            type: object
-            properties:
-              last_hash:
-                type: string
-                description: Base64 encoded hash of the last block in the chain
-              valid:
-                type: boolean
-                description: Whether or not the chain is valid
-              length:
-                type: integer
-                description: Count of blocks this chain stores
-          image:
-            type: object
-            properties:
-              last_hash:
-                type: string
-                description: Base64 encoded hash of the last block in the chain
-              valid:
-                type: boolean
-                description: Whether or not the chain is valid
-              length:
-                type: integer
-                description: Count of blocks this chain stores
-          key:
-            type: object
-            properties:
-              last_hash:
-                type: string
-                description: Base64 encoded hash of the last block in the chain
-              valid:
-                type: boolean
-                description: Whether or not the chain is valid
-              length:
-                type: integer
-                description: Count of blocks this chain stores
-  Block:
+        type: array
+        items:
+          type: string
+        description: List of nodes this one is connected to
+  Site:
     type: object
     properties:
       hash:
         type: string
-        description: Base64 encoded hash of the block
-      previous_hash:
+        description: Base64 encoded hash of the site
+      bubblebabble:
         type: string
-        description: Base64 encoded hash of the previous block
-      date:
-        type: integer
-        description: Unix Timestap of the time this block was added
+        description: Bubblebabble encoded hash of the site
+      validates:
+        type: array
+        items:
+          type: string
+        description: Base64 encoded hashes of the sites which this site validate
       type:
         type: string
         description: Type of the stored data (Post/Image)
       content:
         type: string
-        description: Block content as specified in Type
-      public_key:
-        type: string
-        description: ASCII encoded gpg public key
-      signature:
-        type: string
-        description: gpg signature of the content
+        description: Hashed site content
+      weight:
+        type: integer
+        description: Count of sites validating (directly or indirectly) this site
       nonce:
         type: integer
         description: Calculated nonce
+      data:
+        type: object
+        description: Object specific schema
   Error:
     type: object
     properties:
