@@ -68,7 +68,7 @@ paths:
           description: Site was created
         '400':
           description: Invalid nonce
-  /search:
+  /tangle:
     get:
       description: Queries for sites
       parameters:
