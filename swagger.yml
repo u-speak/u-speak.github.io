@@ -15,7 +15,7 @@ paths:
       description: Returns the status of the current node
       responses:
         '200':
-          description: Successfull Status Response
+          description: Successful Status Response
           schema:
             $ref: '#/definitions/StatusInfo'
   '/tangle/random':
@@ -68,7 +68,7 @@ paths:
           description: Site was created
         '400':
           description: Invalid nonce
-  /search:
+  /tangle:
     get:
       description: Queries for sites
       parameters:
